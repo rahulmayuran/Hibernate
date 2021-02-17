@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 @Entity
 public class City {
@@ -11,8 +12,8 @@ public class City {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
-	private String name;
+
+	private BigName names;
 	
 	private String area;
 	
@@ -24,11 +25,12 @@ public class City {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+	
+	public BigName getNames() {
+		return names;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setNames(BigName names) {
+		this.names = names;
 	}
 	public String getArea() {
 		return area;
@@ -45,8 +47,9 @@ public class City {
 	
 	@Override
 	public String toString() {
-		return "City [id=" + id + ", name=" + name + ", area=" + area + ", population=" + population + "]";
+		return "City [id=" + id + ", names=" + names + ", area=" + area + ", population=" + population + "]";
 	}
+	
 	
 	
 }
