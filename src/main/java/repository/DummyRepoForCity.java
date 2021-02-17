@@ -21,9 +21,9 @@ import Entity.City;
 	{
 		City cityInsideMethod = new City();
 		cityInsideMethod.setId(3);
-		cityInsideMethod.setName("Delhi");
-		cityInsideMethod.setArea("1,484 km²");
-		cityInsideMethod.setPopulation("1.9 crores");
+		cityInsideMethod.setName("Kolkata");
+		cityInsideMethod.setArea("206.1 km²");
+		cityInsideMethod.setPopulation("1.49 crores");
 		return cityInsideMethod;
 	}
 	
@@ -33,25 +33,32 @@ import Entity.City;
 		System.out.println("The city object is "+ citySetter(cityfromMainblock));
 		
 		
-		Configuration configObj = new Configuration().configure().addAnnotatedClass(City.class);
+Configuration configObj = new Configuration().configure().addAnnotatedClass(City.class);
+System.out.println("The Configuration object is "+ configObj);
 		
-		ServiceRegistry serviceRegistryObj = 
-				new ServiceRegistryBuilder()
-				.applySettings(configObj.getProperties())
-				.buildServiceRegistry();
+	ServiceRegistry serviceRegistryObj = 
+			new ServiceRegistryBuilder()
+			.applySettings(configObj.getProperties())
+			.buildServiceRegistry();
+	
+	System.out.println("The Service-Registry object is "+ serviceRegistryObj);
 		
 		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(serviceRegistryObj); 
-		Session sessionObj = sessionfactoryObj.openSession();
+		System.out.println("The SessionFactory object is "+ sessionfactoryObj);
 		
-		Transaction transactionObj = sessionObj.beginTransaction();
+			Session sessionObj = sessionfactoryObj.openSession();
+			System.out.println("The Session object is "+ sessionObj);
 		
-		//Persisting city object which is defined in static method of City type
-		sessionObj.save(citySetter(cityfromMainblock));
+				Transaction transactionObj = sessionObj.beginTransaction();
+				System.out.println("The Transaction object is "+ transactionObj);
+		
+				//Persisting city object which is defined in static method of City type
+				sessionObj.save(citySetter(cityfromMainblock));
 	
-		
-		transactionObj.commit();
+				transactionObj.commit();
 
 	}
+	
 	
 	
 }
