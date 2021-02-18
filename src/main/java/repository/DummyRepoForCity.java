@@ -2,7 +2,6 @@ package repository;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
@@ -19,9 +18,12 @@ import Entity.People;
 	
 	public static void main(String[] args) {
 
-		/* Refer the People instance as a setter in setPeople method
-		 * to make foreign key reference.
-		 * 112L will be a common field in both tables
+		/* 
+		 * Creating people object and appending to City object.
+		 * 
+		 * add the People instance as a getter in getPeople method, because it is a Set
+		 * to create a new table and provide the common column.
+		 * 112L will be a common field in [City_People] table
 		 */
 		People people = new People();
 			people.setFamousFor("Hilsa Fish");
@@ -32,8 +34,7 @@ import Entity.People;
 		
 		/*
 		 * Creating a City object that holds the names as composite columns
-		 * created a reference to People class by passing the instance
-		 */
+		*/
 		City addCity = new City();
 			addCity.setId(1);
 				BigName addnames = new BigName();
@@ -42,14 +43,10 @@ import Entity.People;
 			addCity.setNames(addnames);
 			addCity.setArea("1,484 km²");
 			addCity.setPopulation("1.9 crores");
-			addCity.setPeople(people);
+			addCity.getPeople().add(people);
 			
 		/*
-		 * Inside Configuration > ServiceRegistry > SessionFactory > Session , A transaction happens
-		 * As Configuration is the only implementation class and all others all interfaces.
-		 * 
-		 * If you have different cfg.xml file, then provide the new name under configure method
-		 * all the entity classes that needs a table is marked under addAnnotatedClass method
+		 * saving sessions for both objects and committing the transaction
 		 */
 		Configuration configObj = new Configuration()
 								.configure()

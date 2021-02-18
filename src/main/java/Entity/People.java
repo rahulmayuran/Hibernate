@@ -1,15 +1,11 @@
 package Entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /*
- * A funny example , 1 city has 1 person. 
- * This denotes the experience of each person to his city.
- * If it is so, each person can belong to one city at a specific time 
- * unless he keeps one leg in one city and another leg in other city.
+ * @OneToMany annotation will imply that 
+ * One city has many people, from a social viewpoint
  */
 @Entity
 public class People {
@@ -18,9 +14,13 @@ public class People {
 	private Long MobId;
 	
 	private int noOfLiterates;
+	
 	private int males;
+	
 	private int females;
+	
 	private String famousFor;
+	
 	public Long getMobId() {
 		return MobId;
 	}
