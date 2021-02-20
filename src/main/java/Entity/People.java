@@ -1,7 +1,11 @@
 package Entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /*
  * @OneToMany annotation will imply that 
@@ -10,8 +14,13 @@ import javax.persistence.Id;
 @Entity
 public class People {
 
+	public People() {
+		
+	}
+	
 	@Id
-	private Long MobId;
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long mobId;
 	
 	private int noOfLiterates;
 	
@@ -21,11 +30,21 @@ public class People {
 	
 	private String famousFor;
 	
+	/*
+	 * Adding a bi-directional relationship, So that City knows it has many people 
+	 * and Poeple know that they belong to one City.
+	 * 
+	 * Needs a JoinColumn that will attach the cityId from City table into People table
+	 */
+	@ManyToOne
+	@JoinColumn(name = "cityId" )
+	private City city;
+	
 	public Long getMobId() {
-		return MobId;
+		return mobId;
 	}
 	public void setMobId(Long mobId) {
-		MobId = mobId;
+		this.mobId = mobId;
 	}
 	public int getNoOfLiterates() {
 		return noOfLiterates;
@@ -51,12 +70,21 @@ public class People {
 	public void setFamousFor(String famousFor) {
 		this.famousFor = famousFor;
 	}
+	public City getCity() {
+		return city;
+	}
+	public void setCity(City city) {
+		this.city = city;
+	}
 	
 	@Override
 	public String toString() {
-		return "People [MobId=" + MobId + ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females="
-				+ females + ", famousFor=" + famousFor + "]";
+		return "People [mobId=" + mobId + ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females="
+				+ females + ", famousFor=" + famousFor + ", city=" + city + "]";
 	}
+	
+	
+	
 	
 	
 }

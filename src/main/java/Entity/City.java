@@ -3,6 +3,7 @@ package Entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,17 +11,21 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 /*
- * OneToMany annotation should be provided in one class that has a relationship 
- * with the other class, 
- * 
- * That field must be a Map ,List or basically a Collection object
+ * Example for both OneToMany and ManyToOne annotations with proper mappings.
  */
 @Entity
 public class City {
 
+	/*
+	 * If you want a Bi-directional mapping, then remove the GenerationType.Identity for this class
+	 * it should not be AUTO, not SEQUENCE, not TABLE
+	 * 
+	 * The reason is that, this cityid is referenced as a foreign key in People table
+	 * 
+	 */
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int cityId;
 
 	private BigName names;
 	
@@ -35,19 +40,24 @@ public class City {
 	 * So you're creating a list/map of this object 
 	 * 
 	 * If one entity is [City] and other Entity is [People], 
-	 * For OneToOne [City] table has a extra column called City_MobId that has FK with PK of [People] table
+	 * 1. For OneToOne [City] table has a extra column called City_MobId that has FK with PK of [People] table
 	 * 
-	 * But for OneToMany, A new table will be created -> [City_People] and it will have both City_Id and people_MobId 
+	 * 2. But for OneToMany, A new table will be created -> [City_People] and it will have both City_Id and people_MobId
+	 * 
+	 * 3. If you want to do a Bi-directional mapping, then you have to provide a 
+	 * mappedBy = "Class instance of another Entity" on a Collection for OneToMany
+	 * and see another Entity 
+	 * 
 	 */
 	
-	@OneToMany
+	@OneToMany(mappedBy = "city")
 	private Set<People> people = new HashSet<People>();
 	
-	public int getId() {
-		return id;
+	public int getCityId() {
+		return cityId;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setCityId(int cityId) {
+		this.cityId = cityId;
 	}
 	
 	public BigName getNames() {
@@ -77,9 +87,10 @@ public class City {
 	
 	@Override
 	public String toString() {
-		return "City [id=" + id + ", names=" + names + ", area=" + area + ", population=" + population + ", people="
-				+ people + "]";
+		return "City [cityId=" + cityId + ", names=" + names + ", area=" + area + ", population=" + population
+				+ ", people=" + people + "]";
 	}
+	
 	
 	
 }
