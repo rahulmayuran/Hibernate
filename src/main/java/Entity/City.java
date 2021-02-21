@@ -1,30 +1,28 @@
 package Entity;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 /*
- * Example for both OneToMany and ManyToOne annotations with proper mappings.
+ * To achieve ManyToMany Mapping with City to People, many cities have many people
+ * 
+ * People Table has mobId, City table has cityId, both are PK's per se.
+ * But in this class, we are mentioning targetEntity as People class with ALL cascades
+ * 
+ * The Mapping table is PeopleCitymapper , with joincolumns that should be PK of targetEntity which is mobId
+ * inverseJoinColumn should be the PK of the same entity class which is cityId
+ * 
  */
 @Entity
 public class City {
 
-	/*
-	 * If you want a Bi-directional mapping, then remove the GenerationType.Identity for this class
-	 * it should not be AUTO, not SEQUENCE, not TABLE
-	 * 
-	 * The reason is that, this cityid is referenced as a foreign key in People table
-	 * 
-	 */
 	@Id
-	//@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int cityId;
 
 	private BigName names;
@@ -32,26 +30,14 @@ public class City {
 	private String area;
 	
 	private String population;
+
+	@ManyToMany(targetEntity = People.class, cascade = {CascadeType.ALL})
+	@JoinTable(name = "PeopleCityMapper", 
+				joinColumns = {@JoinColumn(name="mobId")},
+				inverseJoinColumns = {@JoinColumn(name ="cityId")}
+				)
 	
-	/*
-	 * OneToMany can't be done with single entity object
-	 * As you will get AnnotationException and illegal attempt to map a non-collection
-	 * 
-	 * So you're creating a list/map of this object 
-	 * 
-	 * If one entity is [City] and other Entity is [People], 
-	 * 1. For OneToOne [City] table has a extra column called City_MobId that has FK with PK of [People] table
-	 * 
-	 * 2. But for OneToMany, A new table will be created -> [City_People] and it will have both City_Id and people_MobId
-	 * 
-	 * 3. If you want to do a Bi-directional mapping, then you have to provide a 
-	 * mappedBy = "Class instance of another Entity" on a Collection for OneToMany
-	 * and see another Entity 
-	 * 
-	 */
-	
-	@OneToMany(mappedBy = "city")
-	private Set<People> people = new HashSet<People>();
+	private Set<People> people;
 	
 	public int getCityId() {
 		return cityId;
@@ -78,12 +64,10 @@ public class City {
 	public void setPopulation(String population) {
 		this.population = population;
 	}
-	public Set<People> getPeople() {
-		return people;
-	}
-	public void setPeople(Set<People> people) {
-		this.people = people;
-	}
+	
+	  public Set<People> getPeople() { return people; } public void
+	  setPeople(Set<People> people) { this.people = people; }
+	 
 	
 	@Override
 	public String toString() {

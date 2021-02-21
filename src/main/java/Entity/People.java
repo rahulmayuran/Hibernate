@@ -1,11 +1,7 @@
 package Entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 /*
  * @OneToMany annotation will imply that 
@@ -18,8 +14,14 @@ public class People {
 		
 	}
 	
+	/*
+	 * No need to mention the GeneratedType as Identity, You can do so,
+	 * But this demo wants to map the Id which is set in Repository class, 
+	 * 
+	 * so that if mobId is 101, 112 and if cityId is 110, 
+	 * then in mapping table we should see that 110-> 101 and 110-> 112.
+	 */
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long mobId;
 	
 	private int noOfLiterates;
@@ -29,17 +31,13 @@ public class People {
 	private int females;
 	
 	private String famousFor;
-	
+
 	/*
-	 * Adding a bi-directional relationship, So that City knows it has many people 
-	 * and Poeple know that they belong to one City.
-	 * 
-	 * Needs a JoinColumn that will attach the cityId from City table into People table
+	 * No need to create a list of City object and map it ,
+	 *  
+	 * Just like you did for previous examples. If One class has the annotation 
+	 * of ManyToMany, then it is enough, People doesn't need to know about City explicitly.
 	 */
-	@ManyToOne
-	@JoinColumn(name = "cityId" )
-	private City city;
-	
 	public Long getMobId() {
 		return mobId;
 	}
@@ -70,17 +68,11 @@ public class People {
 	public void setFamousFor(String famousFor) {
 		this.famousFor = famousFor;
 	}
-	public City getCity() {
-		return city;
-	}
-	public void setCity(City city) {
-		this.city = city;
-	}
 	
 	@Override
 	public String toString() {
 		return "People [mobId=" + mobId + ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females="
-				+ females + ", famousFor=" + famousFor + ", city=" + city + "]";
+				+ females + ", famousFor=" + famousFor + "]";
 	}
 	
 	
