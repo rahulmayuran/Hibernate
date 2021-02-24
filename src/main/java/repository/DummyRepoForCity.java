@@ -76,7 +76,25 @@ import Entity.People;
 		
 		System.out.println("\nForeign key for people instance with City table " + people.getCity().getCityId());
 		System.out.println("\nForeign key for anothersetofpeople instance with City table " + anothersetofpeople.getCity().getCityId());
-	
+
+/*
+ * 1.Creating a Session object to perform EAGER loading, that is annotated in City's OneToMany argument
+ * 
+ * 2.The advantage here is, you didn't call people object, any getters of people or set of people. 
+ * 		such that without an explicit call, all the DB values are fetched
+ * 
+ * 3. From the previous example of LAZY loading, where the committing/rollback is not necessary, The session is simply closed
+ */
+		Session eagerLoading = sessionfactoryObj.openSession();
+			eagerLoading.beginTransaction();
+			
+			City eagerCity = (City) eagerLoading.get(City.class, 110);
+			
+			System.out.println("\nEager loading of People from City's getter -> " + eagerCity.getPeople());
+			System.out.println("\nEager loading of City -> " + eagerCity.getNames());
+			System.out.println("\nEager loading of both City/People -> " + eagerCity);
+			
+		eagerLoading.close();
 	}
 	
 	

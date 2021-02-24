@@ -80,7 +80,7 @@ public class People {
 	@Override
 	public String toString() {
 		return "People [mobId=" + mobId + ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females="
-				+ females + ", famousFor=" + famousFor + ", city=" + city + "]";
+				+ females + ", famousFor=" + famousFor + "]";
 	}
 	
 	
