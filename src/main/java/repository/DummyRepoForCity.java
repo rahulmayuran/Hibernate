@@ -56,9 +56,32 @@ System.out.println("The Configuration object is "+ configObj.getClass());
 		
 				//Persisting city object which is defined in static method of City type
 				sessionObj.save(citySetter(cityfromMainblock));
+				
+				/*
+				 * Fetching the Name of the city twice, Hibernate has Default FIRST LEVEL Caching
+				 * Eventhough, you used get method twice, only one query is executed
+				 */
+				City fetchname = (City) sessionObj.get(City.class, 1);
+				City fetchnametwice = (City) sessionObj.get(City.class, 1);
+				
+				System.out.println("Name of City from get method -> " + fetchname.getName());
+				System.out.println("Name of City fetched again from get method -> " + fetchnametwice.getName());
 	
 				transactionObj.commit();
-
+				sessionObj.close();
+				
+				/*
+				 * Created another session and again fetching the name of City.
+				 * This time, a new query is fired.
+				 * 
+				 * That's the reason for SECOND LEVEL Cache to pitch in.
+				 */
+				Session secondFetch = sessionfactoryObj.openSession();
+				
+				City fetchedInAnotherSession = (City) secondFetch.get(City.class, 1);
+				System.out.println("Name of the city fetched from another session -> " + fetchedInAnotherSession.getName());
+				
+				secondFetch.close();
 	}
 	
 	
