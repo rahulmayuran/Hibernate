@@ -77,7 +77,8 @@ import Entity.People;
 		System.out.println("\nForeign key for people instance with City table " + people.getCity().getCityId());
 		System.out.println("\nForeign key for anothersetofpeople instance with City table " + anothersetofpeople.getCity().getCityId());
 
-/*
+/** {doc} <a>https://www.baeldung.com/hibernate-lazy-eager-loading</a>
+ * 
  * 1.Creating a Session object to perform EAGER loading, that is annotated in City's OneToMany argument
  * 
  * 2.The advantage here is, you didn't call people object, any getters of people or set of people. 
@@ -99,3 +100,4 @@ import Entity.People;
 	
 	
 }
+ 
