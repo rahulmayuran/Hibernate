@@ -34,23 +34,25 @@ import Entity.City;
 		
 		
 Configuration configObj = new Configuration().configure().addAnnotatedClass(City.class);
-System.out.println("The Configuration object is "+ configObj);
+System.out.println("The Configuration object is "+ configObj.getClass());
 		
 	ServiceRegistry serviceRegistryObj = 
 			new ServiceRegistryBuilder()
 			.applySettings(configObj.getProperties())
 			.buildServiceRegistry();
 	
-	System.out.println("The Service-Registry object is "+ serviceRegistryObj);
+	System.out.println("The Service-Registry object is "+ serviceRegistryObj.getClass());
 		
 		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(serviceRegistryObj); 
-		System.out.println("The SessionFactory object is "+ sessionfactoryObj);
+		System.out.println("The SessionFactory object is "+ sessionfactoryObj.getClass());
 		
 			Session sessionObj = sessionfactoryObj.openSession();
-			System.out.println("The Session object is "+ sessionObj);
+			System.out.println("The Session object is "+ sessionObj.getClass());
 		
 				Transaction transactionObj = sessionObj.beginTransaction();
-				System.out.println("The Transaction object is "+ transactionObj);
+				transactionObj.setTimeout(5);
+				System.out.println("The configuration object is "+ transactionObj);
+				System.out.println("The timeout for Transaction object is "+ transactionObj.getTimeout());
 		
 				//Persisting city object which is defined in static method of City type
 				sessionObj.save(citySetter(cityfromMainblock));
