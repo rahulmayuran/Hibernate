@@ -7,6 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /*
  * @OneToMany annotation will imply that 
  * One city has many people, from a social viewpoint
@@ -31,13 +34,14 @@ public class People {
 	private String famousFor;
 	
 	/*
-	 * Adding a bi-directional relationship, So that City knows it has many people 
+	 * 1.Adding a bi-directional relationship, So that City knows it has many people 
 	 * and Poeple know that they belong to one City.
 	 * 
-	 * Needs a JoinColumn that will attach the cityId from City table into People table
+	 * 2.Needs a JoinColumn that will attach the cityId from City table into People table
+	 * 3.You dont have mappedBy annotation unlike OneToMany
 	 */
 	@ManyToOne
-	@JoinColumn(name = "cityId" )
+	@JoinColumn(name = "cityId")
 	private City city;
 	
 	public Long getMobId() {
@@ -77,12 +81,11 @@ public class People {
 		this.city = city;
 	}
 	
-	@Override
-	public String toString() {
-		return "People [mobId=" + mobId + ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females="
-				+ females + ", famousFor=" + famousFor + ", city=" + city + "]";
-	}
 	
+	  @Override public String toString() { return "People [mobId=" + mobId +
+	  ", noOfLiterates=" + noOfLiterates + ", males=" + males + ", females=" +
+	  females + ", famousFor=" + famousFor + "]"; }
+	 
 	
 	
 	

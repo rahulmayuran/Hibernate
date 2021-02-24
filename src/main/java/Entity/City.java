@@ -1,13 +1,13 @@
 package Entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 /*
@@ -32,26 +32,29 @@ public class City {
 	private String area;
 	
 	private String population;
-	
-	/*
-	 * OneToMany can't be done with single entity object
-	 * As you will get AnnotationException and illegal attempt to map a non-collection
-	 * 
-	 * So you're creating a list/map of this object 
-	 * 
-	 * If one entity is [City] and other Entity is [People], 
-	 * 1. For OneToOne [City] table has a extra column called City_MobId that has FK with PK of [People] table
-	 * 
-	 * 2. But for OneToMany, A new table will be created -> [City_People] and it will have both City_Id and people_MobId
-	 * 
-	 * 3. If you want to do a Bi-directional mapping, then you have to provide a 
-	 * mappedBy = "Class instance of another Entity" on a Collection for OneToMany
-	 * and see another Entity 
-	 * 
-	 */
-	
-	@OneToMany(mappedBy = "city")
-	private Set<People> people = new HashSet<People>();
+
+/*
+ * OneToMany can't be done with single entity object
+ * As you will get AnnotationException and illegal attempt to map a non-collection
+ * 
+ * So you're creating a list/map of this object 
+ * 
+ * If one entity is [City] and other Entity is [People], 
+ * 1. For OneToOne [City] table has a extra column called City_MobId that has FK with PK of [People] table
+ * 
+ * 2. But for OneToMany, A new table will be created -> [City_People] and it will have both City_Id and people_MobId
+ * 
+ * 3. If you want to do a Bi-directional mapping, then you have to provide a 
+ * mappedBy = "Class instance of another Entity" on a Collection for OneToMany
+ * and see another Entity 
+ * 
+ * 4.No need to mention as FETCH type as LAZY, It is so.
+ * 5.You should not used JoinColumn annotation where mappedBy is used, Only for OneToMany, mapped by is possible.
+ * 
+ */
+	@OneToMany(mappedBy = "city",fetch = FetchType.LAZY)
+//@JoinColumn(name = "mobId")
+	private Collection<People> people ;
 	
 	public int getCityId() {
 		return cityId;
@@ -78,16 +81,16 @@ public class City {
 	public void setPopulation(String population) {
 		this.population = population;
 	}
-	public Set<People> getPeople() {
+	public Collection<People> getPeople() {
 		return people;
 	}
-	public void setPeople(Set<People> people) {
+	public void setPeople(Collection<People> people) {
 		this.people = people;
 	}
 	
 	@Override
 	public String toString() {
-		return "City [cityId=" + cityId + ", names=" + names + ", area=" + area + ", population=" + population
+		return "City [cityId=" + cityId + ", area=" + area +", bigname =" + names +", population=" + population
 				+ ", people=" + people + "]";
 	}
 	

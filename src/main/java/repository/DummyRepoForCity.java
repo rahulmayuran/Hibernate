@@ -1,5 +1,9 @@
 package repository;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -32,6 +36,7 @@ import Entity.People;
 		
 		People people = new People();
 		
+		//Setting mobile Id is useless, you marked Generation type as identity
 			people.setMobId(112L);
 			people.setFamousFor("Hilsa Fish");
 			people.setFemales(23215435);
@@ -40,7 +45,8 @@ import Entity.People;
 			people.setCity(addCity);
 			
 		People anothersetofpeople = new People();
-			
+		
+		//Setting mobile Id is useless, you marked Generation type as identity	
 			anothersetofpeople.setMobId(101L);
 			anothersetofpeople.setFamousFor("Howrah Bridge");
 			anothersetofpeople.setFemales(432432554);
@@ -64,19 +70,46 @@ import Entity.People;
 		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(serviceRegistryObj); 
 		Session sessionObj = sessionfactoryObj.openSession();
 		
-		sessionObj.beginTransaction();
-			sessionObj.save(people);
-			sessionObj.save(anothersetofpeople);
-			sessionObj.save(addCity);
-		sessionObj.getTransaction().commit();
+			sessionObj.beginTransaction();
+				sessionObj.save(people);
+				sessionObj.save(anothersetofpeople);
+				sessionObj.save(addCity);
+			sessionObj.getTransaction().commit();
+			sessionObj.close();
 		
 		System.out.println("\nInserted the City into DB -> "+ addCity);
 		System.out.println("Inserted People into DB -> "+ people);
 		System.out.println("Inserted another set of people into DB -> "+ anothersetofpeople);
 		
+//Printing the foreign keys
 		System.out.println("\nForeign key for people instance with City table " + people.getCity().getCityId());
 		System.out.println("\nForeign key for anothersetofpeople instance with City table " + anothersetofpeople.getCity().getCityId());
 	
+/*
+ * Creating another session for implementing LAZY FETCHING
+ */
+		Session lazyAndEagerLoading = sessionfactoryObj.openSession();
+		
+			lazyAndEagerLoading.beginTransaction();
+			
+			City lazyCity = (City) lazyAndEagerLoading.get(City.class, 110);
+			People lazypeople = (People) lazyAndEagerLoading.get(People.class, 1L);
+		
+//Select query is triggered for only city class, It doesn't care about People entity
+			System.out.println("\nArea  from People ref to City is " + lazypeople.getCity().getArea());
+			
+//Select query is triggered for people and city entities with a left outer join city on P.cityId= C.cityId
+//It is lazy loading, because, unless you ask for it, you won't get it.
+			System.out.println("\nPopulation in City is " + lazyCity.getPopulation());
+			
+//Select query is trigerred from One-To-Many people entity 			
+			Collection<People> peopleSet = lazyCity.getPeople();
+			for(People p: peopleSet) {System.out.println("\n list of people -> "+p);}
+			
+//This transaction is not rolled back, and it doesn't care to be committed/rolled back, why?
+			lazyAndEagerLoading.getTransaction().rollback();
+			lazyAndEagerLoading.close();
+			
 	}
 	
 	
