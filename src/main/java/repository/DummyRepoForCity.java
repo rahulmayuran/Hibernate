@@ -75,6 +75,12 @@ System.out.println("The Configuration object is "+ configObj.getClass());
 				 * This time, a new query is fired.
 				 * 
 				 * That's the reason for SECOND LEVEL Cache to pitch in.
+				 * Now, it will only print one query, after the following changes
+				 *  1. Including net.sf.ehcache dependency
+				 *  2. Including hibernate-ehcache-{same version of core}
+				 *  3. in cfg.xml file, mention second-level cache as true & provide the cache class name under region factory class
+				 *  4. Mark entity class which is cached as @Cacheable and @cache with usage as READ_only
+				 *  
 				 */
 				Session secondFetch = sessionfactoryObj.openSession();
 				
