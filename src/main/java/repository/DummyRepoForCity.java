@@ -1,5 +1,6 @@
 package repository;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -15,58 +16,49 @@ import Entity.City;
 	 * expecting service registry object
 	 */
 	public class DummyRepoForCity {
+	
+	
 
-	
-	public static City citySetter(City methodCity) 
-	{
-		City cityInsideMethod = new City();
-		cityInsideMethod.setId(3);
-		cityInsideMethod.setName("Kolkata");
-		cityInsideMethod.setArea("206.1 km²");
-		cityInsideMethod.setPopulation("1.49 crores");
-		return cityInsideMethod;
-	}
-	
 	public static void main(String[] args) {
 		
-		City cityfromMainblock = new City();
-		System.out.println("The city object is "+ citySetter(cityfromMainblock));
 		
+		City cityInsideMethod = new City();
+			cityInsideMethod.setName("Kolkata");
+			cityInsideMethod.setArea("206.1 km²");
+			cityInsideMethod.setPopulation("1.49 crores");
+		
+		//City cityfromMainblock = new City();
+		System.out.println("The city object is "+ cityInsideMethod);
+		
+		City fetchname;
 		
 Configuration configObj = new Configuration().configure().addAnnotatedClass(City.class);
-System.out.println("The Configuration object is "+ configObj.getClass());
 		
 	ServiceRegistry serviceRegistryObj = 
 			new ServiceRegistryBuilder()
 			.applySettings(configObj.getProperties())
 			.buildServiceRegistry();
-	
-	System.out.println("The Service-Registry object is "+ serviceRegistryObj.getClass());
-		
+			
 		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(serviceRegistryObj); 
-		System.out.println("The SessionFactory object is "+ sessionfactoryObj.getClass());
 		
-			Session sessionObj = sessionfactoryObj.openSession();
-			System.out.println("The Session object is "+ sessionObj.getClass());
-		
+			Session sessionObj = sessionfactoryObj.openSession();	
+			
 				Transaction transactionObj = sessionObj.beginTransaction();
-				transactionObj.setTimeout(5);
-				System.out.println("The configuration object is "+ transactionObj);
-				System.out.println("The timeout for Transaction object is "+ transactionObj.getTimeout());
-		
-				//Persisting city object which is defined in static method of City type
-				sessionObj.save(citySetter(cityfromMainblock));
-				
 				/*
 				 * Fetching the Name of the city twice, Hibernate has Default FIRST LEVEL Caching
 				 * Eventhough, you used get method twice, only one query is executed
 				 */
-				City fetchname = (City) sessionObj.get(City.class, 1);
-				City fetchnametwice = (City) sessionObj.get(City.class, 1);
+				Query fetchquery = sessionObj.createQuery("from City where id=1");
+				fetchquery.setCacheable(true);
+				fetchname = (City) fetchquery.uniqueResult();
 				
-				System.out.println("Name of City from get method -> " + fetchname.getName());
-				System.out.println("Name of City fetched again from get method -> " + fetchnametwice.getName());
-	
+				Query fetchqueryinSameSession = sessionObj.createQuery("from City where id=1");
+				fetchqueryinSameSession.setCacheable(true);
+				fetchname = (City) fetchqueryinSameSession.uniqueResult();
+					
+				System.out.println("Name of City from get method -> " + fetchname.getName());	
+				System.out.println("Name of City from get method in Same session -> " + fetchname.getName());	
+
 				transactionObj.commit();
 				sessionObj.close();
 				
@@ -81,13 +73,22 @@ System.out.println("The Configuration object is "+ configObj.getClass());
 				 *  3. in cfg.xml file, mention second-level cache as true & provide the cache class name under region factory class
 				 *  4. Mark entity class which is cached as @Cacheable and @cache with usage as READ_only
 				 *  
+				 *  5.This works only for get() method of hibernate, it will not work for query methods,
+				 *  To solve,this you have to mention cache-query true in cfg and here you need to setCacheable as true
 				 */
-				Session secondFetch = sessionfactoryObj.openSession();
+			Session secondFetch = sessionfactoryObj.openSession();
 				
-				City fetchedInAnotherSession = (City) secondFetch.get(City.class, 1);
-				System.out.println("Name of the city fetched from another session -> " + fetchedInAnotherSession.getName());
+				secondFetch.beginTransaction();
 				
-				secondFetch.close();
+				Query fetchqueryAgain = secondFetch.createQuery("from City where id=1");
+				fetchqueryAgain.setCacheable(true);
+				fetchname = (City) fetchqueryAgain.uniqueResult();
+		
+				System.out.println("Name of the city fetched from another session -> " + fetchname.getName());
+			
+			secondFetch.getTransaction().commit();
+			
+			secondFetch.close();
 	}
 	
 	
