@@ -1,9 +1,15 @@
 package repository;
 
+import java.util.List;
+import java.util.Random;
+
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 import Entity.City;
 
@@ -26,7 +32,7 @@ import Entity.City;
 		cityobjblock = new City();
 		cityobjblock.setName("Mumbai");
 		cityobjblock.setArea("603.4 sqkm");
-		cityobjblock.setPopulation("1.84 crores");
+		cityobjblock.setPopulation(18400000L);
 		System.out.println("Setting city object values in static block");
 	}
 	
@@ -36,7 +42,7 @@ import Entity.City;
 		cityobj.setId(2);
 		cityobj.setName("Chennai");
 		cityobj.setArea("426 km²");
-		cityobj.setPopulation("70.9 lakhs");
+		cityobj.setPopulation(7090000L);
 		return cityobj;
 	}
 	
@@ -51,7 +57,11 @@ import Entity.City;
 		
 		
 		Configuration configObj = new Configuration().configure().addAnnotatedClass(City.class);
-		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(); 
+		
+		ServiceRegistry srcObj = new ServiceRegistryBuilder().applySettings(configObj.getProperties()).buildServiceRegistry();
+		
+		SessionFactory sessionfactoryObj = configObj.buildSessionFactory(srcObj);
+		
 		Session sessionObj = sessionfactoryObj.openSession();
 		
 		Transaction transactionObj = sessionObj.beginTransaction();
@@ -67,8 +77,54 @@ import Entity.City;
 		
 		//WON'T WORK- Persisting city object which is declared in static block/variable of City type
 		sessionObj.save(cityobjblock);
+
+//To insert 10 records in the Database
+		Random rm = new Random();
+		
+		for(int i=0 ; i<10; i++) {
+			City iterate = new City();
+			iterate.setId(i);
+			iterate.setPopulation(rm.nextInt(10000000));
+			iterate.setName("Name "+i);
+			iterate.setArea("Area "+i);
+			sessionObj.save(iterate);
+		}
 		
 		transactionObj.commit();
+
+//Opening a new Session to perform all fetchings
+		Session newSession = sessionfactoryObj.openSession();
+
+/*
+ * To fetch the full list of Cities 
+ */
+			newSession.beginTransaction();
+			Query fetchAll = newSession.createQuery("from City");
+			List<City> cityList = fetchAll.list();
+			
+			for(City c : cityList) {System.out.println(c);}
+
+/*
+ * To get a List of value based on condition
+ */
+			Query fetchMorePop = newSession.createQuery("from City where population>9000000");
+			List<City> cityWithMorePopulation = fetchMorePop.list();
+			
+			int counter = 0;
+			for(City ci : cityWithMorePopulation) {
+				++counter; 
+				System.out.println("Cities with more population"+ci);
+			}
+			System.out.println("\nCities with more than 9 million population-> "+counter);
+			
+/*
+ * To fetch a single Record using HQL
+ */
+			Query fetchSingle = newSession.createQuery("from City where area='null'");
+			City fetchRecord = (City) fetchSingle.uniqueResult();
+			
+			System.out.println("The only empty record in database -> "+fetchRecord);
+			
 
 	}
 	

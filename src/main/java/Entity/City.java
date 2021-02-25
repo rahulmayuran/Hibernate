@@ -1,5 +1,6 @@
 package Entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,11 +13,12 @@ public class City {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
+//	@Column(nullable = false)
 	private String name;
 	
 	private String area;
 	
-	private String population;
+	private long population;
 	
 	public int getId() {
 		return id;
@@ -36,11 +38,11 @@ public class City {
 	public void setArea(String area) {
 		this.area = area;
 	}
-	public String getPopulation() {
+	public Long getPopulation() {
 		return population;
 	}
-	public void setPopulation(String population) {
-		this.population = population;
+	public void setPopulation(long i) {
+		this.population = i;
 	}
 	
 	@Override
