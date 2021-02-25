@@ -124,7 +124,32 @@ import Entity.City;
 			City fetchRecord = (City) fetchSingle.uniqueResult();
 			
 			System.out.println("The only empty record in database -> "+fetchRecord);
+
+/*
+ * Using java variables to set values
+ */
+			long pop = 9000000L;
 			
+//Using :operator and setParameter("",var) to bind that variable  
+//Can use both CreateQuery and CreateSQLQuery, but * will not work in CreateQuery
+			Query fetchSQLQuery = newSession.createSQLQuery("Select * from City where population> :popl");
+			fetchSQLQuery.setParameter("popl", pop);
+
+//Should always be an Object array
+			List<Object[]> citySQLList = (List<Object[]>)fetchSQLQuery.list();
+			
+			int count = 0;
+
+//Double for loops to go deep and fetch records
+			for(Object[] csql: citySQLList) {
+				count++;
+				for(Object csqlcsql : csql) {
+					
+					System.out.println(csqlcsql);
+				}
+				System.out.println("---*New----*City----*Discovered--->ID: "+csql[0]+" Area: "+csql[1]+" Name: "+csql[2]+" Population: "+csql[3]);
+			}
+			System.out.println("\nFetched Records as Dynamic Query with count of ->" + count);
 
 	}
 	
