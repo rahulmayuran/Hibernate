@@ -3,6 +3,7 @@ To learn about the hibernate functions and reduce the core java JDBC boiler plat
 
 1. Embeddable(An Entity class must be marked as @Embeddable and in another class we can use it as @Embedded)
 2. C3PO(Connection pooling example)
+3. Added Enumerated classes and linked to Entity class
 
 # XML
 
