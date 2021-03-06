@@ -1,6 +1,7 @@
 package com.hibernate.Util;
 
-import com.hibernate.Entity.City;
+import com.hibernate.Entity.Student;
+import com.hibernate.Exception.StudentException;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -19,7 +20,7 @@ public class HibernateUtility {
 
 	static{
 
-		LOGGER.info("Initializing the sessionFactory object in static block ->"+sessionFactory.getClass());
+		LOGGER.info("Initializing the sessionFactory object in static block");
 		if(sessionFactory==null)
 		try {
 			//It is an implementation class specially made to accept Properties Mapping and SessionFactory settings.
@@ -61,7 +62,7 @@ public class HibernateUtility {
 
 
 			configObj.setProperties(settingcfg);
-			configObj.addAnnotatedClass(City.class);
+			configObj.addAnnotatedClass(Student.class);
 
 			//An Interface , ...Builder is a Implementation class to apply the configurations
 			//In 5.3.7 instead of ServiceRegistryBuilder we use StandardServiceRegistryBuilder()
