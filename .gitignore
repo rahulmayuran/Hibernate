@@ -1,7 +1,9 @@
-/*.classpath
-/.project
+/target
+/*.iml
 /*.settings
-/*target
+/.project
+/.classpath
+/*.idea
 
 
 # Compiled class file
